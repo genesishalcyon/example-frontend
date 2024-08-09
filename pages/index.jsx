@@ -1,31 +1,30 @@
-import Image from "next/image";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import useAuthStore from "@/store/useAuthStore";
 
-export default function Home() {
-  const [employees, setEmployees] = useState();
-  const fetchData = async () => {
-    console.log("hello world");
-    try {
-      const res = await axios.get("http://localhost:3000/test");
-
-      setEmployees(res.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      // setLoading(false)
-    }
-  };
+const Home = () => {
+  const { currentName, isLoggedIn, initialize } = useAuthStore();
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    initialize();
+  }, [initialize]);
 
   return (
-    <div>
-      {employees?.map((item, index) => (
-        <div key={index}>{item?.name}</div>
-      ))}
+    <div className="w-full min-h-dvh flex items-center justify-center">
+      {isLoggedIn ? (
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">Welcome, {currentName}!</h1>
+          <p className="text-lg">You are logged in</p>
+        </div>
+      ) : (
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">Welcome</h1>
+          <p className="text-lg">
+            Please log in to access your personalized content.
+          </p>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default Home;
